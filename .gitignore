@@ -1,0 +1,7 @@
+*~
+/[Bb]ackup*/
+/dist
+/build
+/.build
+/vendor
+/godanuk

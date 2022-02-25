@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"reflect"
 	"strings"
 	"time"
 
@@ -29,8 +30,22 @@ type Tool struct {
 type mkpasswdPayload struct {
 	Input  string `json:"input"`
 	Salt   string `json:"salt"`
-	Rounds int    `json:"rounds"`
+	Rounds uint32 `json:"rounds"`
 	Method string `json:"method"`
+}
+
+type pwgenPayload struct {
+	NoNumerals   bool   `json:"no-numerals"`
+	NoCapitalize bool   `json:"no-capitalize"`
+	Ambiguous    bool   `json:"ambiguous"`
+	Capitalize   bool   `json:"capitalize"`
+	NumPasswords uint16 `json:"num-passwords"`
+	Numerals     bool   `json:"numerals"`
+	RemoveChars  string `json:"remove-chars"`
+	Secure       bool   `json:"secure"`
+	NoVowels     bool   `json:"no-vowels"`
+	Symbols      bool   `json:"symbols"`
+	Length       uint16 `json:"length"`
 }
 
 type uuidgenPayload struct {
@@ -45,8 +60,9 @@ func main() {
 	r.HandleFunc("/ping", pingHandler).Methods(http.MethodGet)
 
 	// Route handler
-	r.HandleFunc("/tools/uuidgen", uuidHandler).Methods(http.MethodPost)
 	r.HandleFunc("/tools/mkpasswd", mkpasswdHandler).Methods(http.MethodPost)
+	r.HandleFunc("/tools/pwgen", pwgenHandler).Methods(http.MethodPost)
+	r.HandleFunc("/tools/uuidgen", uuidHandler).Methods(http.MethodPost)
 
 	// Setup the server
 	srv := &http.Server{
@@ -99,6 +115,41 @@ func mkpasswdHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Run the command
 	tool := exec.Command("/usr/bin/mkpasswd", cmdargs...)
+	stdout, err := tool.Output()
+
+	responseJSON(w, 200, Tool{
+		Success: err == nil,
+		Command: string(strings.Join(tool.Args, " ")),
+		Output:  fmt.Sprint(strings.TrimSuffix(string(stdout), "\n")),
+	})
+}
+
+func pwgenHandler(w http.ResponseWriter, r *http.Request) {
+	request := pwgenPayload{}
+	decodeRequestPayload(w, r, &request)
+	cmdargs := []string{
+		"-1",
+		fmt.Sprintf("--num-passwords=%d", request.NumPasswords),
+	}
+
+	if request.RemoveChars != "" {
+		cmdargs = append(cmdargs, fmt.Sprintf("--remove-chars=\"%s\"", request.RemoveChars))
+	}
+
+	// @fixme - better approach
+	val := reflect.ValueOf(pwgenPayload{})
+
+	for i := 0; i < val.Type().NumField(); i++ {
+		if reflect.TypeOf(val).Kind() == reflect.Bool && val.Bool() == true {
+			cmdargs = append(cmdargs, fmt.Sprintf("--%s", val.Type().Field(i).Tag.Get("json")))
+		}
+	}
+
+	// Password length
+	cmdargs = append(cmdargs, fmt.Sprintf("%d", request.Length))
+
+	// Run the command
+	tool := exec.Command("/usr/bin/pwgen", cmdargs...)
 	stdout, err := tool.Output()
 
 	responseJSON(w, 200, Tool{

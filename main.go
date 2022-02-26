@@ -10,7 +10,6 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"reflect"
 	"strings"
 	"time"
 
@@ -136,13 +135,36 @@ func pwgenHandler(w http.ResponseWriter, r *http.Request) {
 		cmdargs = append(cmdargs, fmt.Sprintf("--remove-chars=\"%s\"", request.RemoveChars))
 	}
 
-	// @fixme - better approach
-	val := reflect.ValueOf(pwgenPayload{})
+	if request.NoNumerals {
+		cmdargs = append(cmdargs, "--no-numerals")
+	}
 
-	for i := 0; i < val.Type().NumField(); i++ {
-		if reflect.TypeOf(val).Kind() == reflect.Bool && val.Bool() == true {
-			cmdargs = append(cmdargs, fmt.Sprintf("--%s", val.Type().Field(i).Tag.Get("json")))
-		}
+	if request.NoCapitalize {
+		cmdargs = append(cmdargs, "--no-capitalize")
+	}
+
+	if request.Ambiguous {
+		cmdargs = append(cmdargs, "--ambiguous")
+	}
+
+	if request.Capitalize {
+		cmdargs = append(cmdargs, "--capitalize")
+	}
+
+	if request.Numerals {
+		cmdargs = append(cmdargs, "--numerals")
+	}
+
+	if request.Secure {
+		cmdargs = append(cmdargs, "--secure")
+	}
+
+	if request.NoVowels {
+		cmdargs = append(cmdargs, "--no-vowels")
+	}
+
+	if request.Symbols {
+		cmdargs = append(cmdargs, "--symbols")
 	}
 
 	// Password length

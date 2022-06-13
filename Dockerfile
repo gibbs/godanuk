@@ -9,7 +9,7 @@ RUN go get -d && \
     rm -rf /go
 
 FROM debian:bullseye
-RUN apt-get update && apt-get install -y bash pwgen scrypt uuid-runtime whois
+RUN apt-get update && apt-get install -y bash bind9-dnsutils pwgen scrypt uuid-runtime whois
 
 COPY --from=build /usr/local/bin/godanuk /usr/local/bin/godanuk
 EXPOSE 8084

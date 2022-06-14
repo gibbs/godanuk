@@ -3,7 +3,7 @@ LABEL maintainer "Dan Gibbs <dev@dangibbs.co.uk>"
 
 WORKDIR /go/src/github.com/gibbs/godanuk
 ENV GODANUK_VERSION 0.5
-COPY go.mod go.sum main.go /go/src/github.com/gibbs/godanuk/
+COPY ./ /go/src/github.com/gibbs/godanuk/
 RUN go get -d && \
     go build -o /usr/local/bin/godanuk && \
     rm -rf /go

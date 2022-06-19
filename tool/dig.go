@@ -45,6 +45,18 @@ func DigHandler(request *digToolPayload) *digToolResponse {
 		"quad9":      "9.9.9.9",
 		"opendns":    "208.67.222.222",
 		"comodo":     "8.26.56.26",
+
+		// UK
+		"bt":         "62.6.40.178",
+		"plusnet":    "212.159.13.49",
+		"sky":        "90.207.238.97",
+		"ee":         "87.237.17.198",
+		"virgin":     "194.168.4.100",
+		"talktalk":   "62.24.134.1",
+		"vodafone":   "90.255.255.90",
+		"zen":        "212.23.3.100",
+		"hyperoptic": "141.0.144.64",
+		"kcom":       "212.50.160.38",
 	}
 
 	cmdopts := []string{

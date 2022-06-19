@@ -44,6 +44,13 @@ func main() {
 		responseJSON(w, 200, tool.MkpasswdHandler(request))
 	}).Methods(http.MethodPost)
 
+	// Propagation tool
+	r.HandleFunc("/tools/propagation", func(w http.ResponseWriter, r *http.Request) {
+		request := tool.PropagationPayloadInterface()
+		decodeRequestPayload(w, r, request)
+		responseJSON(w, 200, tool.PropagationHandler(request))
+	}).Methods(http.MethodPost)
+
 	// Pwgen
 	r.HandleFunc("/tools/pwgen", func(w http.ResponseWriter, r *http.Request) {
 		request := tool.PwgenPayloadInterface()

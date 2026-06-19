@@ -58,6 +58,13 @@ func main() {
 		responseJSON(w, 200, tool.PwgenHandler(request))
 	}).Methods(http.MethodPost)
 
+	// Qrencode
+	r.HandleFunc("/tools/qrencode", func(w http.ResponseWriter, r *http.Request) {
+		request := tool.QrencodePayloadInterface()
+		decodeRequestPayload(w, r, &request)
+		responseJSON(w, 200, tool.QrencodeHandler(request))
+	}).Methods(http.MethodPost)
+
 	// UUID gen
 	r.HandleFunc("/tools/uuidgen", func(w http.ResponseWriter, r *http.Request) {
 		request := tool.UuidgenPayloadInterface()

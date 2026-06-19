@@ -10,7 +10,7 @@ RUN go get -d && \
 
 FROM debian:trixie
 RUN apt-get update && apt-get install -y \
-    bash bind9-dnsutils pwgen scrypt uuid-runtime whois
+    bash bind9-dnsutils pwgen qrencode scrypt uuid-runtime whois
 
 COPY --from=build /usr/local/bin/godanuk /usr/local/bin/godanuk
 EXPOSE 8084

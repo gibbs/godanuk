@@ -65,6 +65,13 @@ func main() {
 		responseJSON(w, 200, tool.QrencodeHandler(request))
 	}).Methods(http.MethodPost)
 
+	// Rdap
+	r.HandleFunc("/tools/rdap", func(w http.ResponseWriter, r *http.Request) {
+		request := tool.RdapPayloadInterface()
+		decodeRequestPayload(w, r, request)
+		responseJSON(w, 200, tool.RdapHandler(request))
+	}).Methods(http.MethodPost)
+
 	// UUID gen
 	r.HandleFunc("/tools/uuidgen", func(w http.ResponseWriter, r *http.Request) {
 		request := tool.UuidgenPayloadInterface()
